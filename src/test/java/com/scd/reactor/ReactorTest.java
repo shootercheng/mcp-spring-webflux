@@ -2,10 +2,13 @@ package com.scd.reactor;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ReactorTest {
 
@@ -80,4 +84,68 @@ public class ReactorTest {
                     index.getAndIncrement();
                 });
     }
+
+    @Test
+    public void testAsyncInvoke() {
+        String[] threadNames = new String[2];
+        Mono<String> result = getUserToken()
+                .flatMap( token -> {
+                    threadNames[0] = Thread.currentThread().getName();
+                    return getProfile(token);
+                }).flatMap(profile -> {
+                    threadNames[1] = Thread.currentThread().getName();
+                    return getInfo(profile);
+                });
+        result.subscribe(s -> Assertions.assertEquals("info profile token", s));
+        System.out.println(Thread.currentThread().getName() + ":"
+                + threadNames[0] + "-" + threadNames[1]);
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(Thread.currentThread().getName() + ":"
+                + threadNames[0] + "," + threadNames[1]);
+    }
+
+
+    private Mono<String> getUserToken() {
+        return Mono.just("token").delayElement(Duration.ofSeconds(1));
+    }
+
+    private Mono<String> getProfile(String token) {
+        return Mono.just("profile " + token).delayElement(Duration.ofSeconds(1));
+    }
+
+    private Mono<String> getInfo(String profile) {
+        return Mono.just("info " + profile).delayElement(Duration.ofSeconds(1));
+    }
+
+    @Test
+    public void testErrorBack() {
+        mainSource().onErrorResume(throwable -> {
+            throwable.printStackTrace();
+            return backSource();
+        }).subscribe(System.out::println);
+    }
+
+    private Flux<String> mainSource() {
+        return Flux.error(new RuntimeException("mock main source error"));
+    }
+
+    private Flux<String> backSource() {
+        return Flux.range(1, 10)
+                .map(String::valueOf);
+    }
+
+    @Test
+    public void testPublish() throws InterruptedException {
+        var publish = Flux.interval(Duration.ofSeconds(1))
+                        .share();
+        publish.subscribe(aLong -> System.out.println("sub1:" + aLong));
+        Thread.sleep(5000);
+        publish.subscribe(aLong -> System.out.println("sub2:" + aLong));
+        Thread.sleep(5000);
+    }
+
 }
