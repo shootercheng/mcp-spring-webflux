@@ -31,6 +31,7 @@
 		<langchain4j.version>1.1.0</langchain4j.version>
 		<spring.ai.version>1.0.0</spring.ai.version>
 		<spring-ai-mcp-annotations.version>0.1.0</spring-ai-mcp-annotations.version>
+		<spring-cloud.version>2025.0.0</spring-cloud.version>
 	</properties>
 
 	<repositories>
@@ -94,6 +95,16 @@
 			<artifactId>spring-ai-mcp-annotations</artifactId>
 			<version>${spring-ai-mcp-annotations.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
@@ -109,6 +120,13 @@
 				<groupId>org.springframework.ai</groupId>
 				<artifactId>spring-ai-bom</artifactId>
 				<version>${spring.ai.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

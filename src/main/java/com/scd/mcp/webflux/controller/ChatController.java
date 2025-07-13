@@ -22,4 +22,9 @@ public class ChatController {
             @RequestParam(value = "message", defaultValue = "你好") String message) {
         return streamChatService.chat(message);
     }
+
+    @GetMapping(value = "/hello", produces = TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> hello() {
+        return Flux.just("Hello World!");
+    }
 }

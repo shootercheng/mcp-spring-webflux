@@ -17,9 +17,10 @@ public class AutocompleteProvider {
     public AutocompleteProvider() {
         // Initialize with sample data
         cityDatabase.put("l", List.of("Lagos", "Lima", "Lisbon", "London", "Los Angeles"));
-        // ....
+
         usernameDatabase.put("a", List.of("alex123", "admin", "alice_wonder", "andrew99"));
-        // Add more data...
+        usernameDatabase.put("j", List.of("james", "john", "johnson", "julia", "jane"));
+        usernameDatabase.put("b", List.of("bob", "Ben", "Benson"));
     }
 
     @McpComplete(prompt = "personalized-message")
@@ -29,6 +30,16 @@ public class AutocompleteProvider {
         List<String> usernames = usernameDatabase.getOrDefault(firstLetter, List.of());
 
         return usernames.stream().filter(username -> username.toLowerCase().startsWith(prefix)).toList();
+    }
+
+    @McpComplete(uri = "user-status://{username}")
+    public List<String> completeUserName(String name) {
+        return completeName(name);
+    }
+
+    @McpComplete(uri = "user-profile-exchange://{username}")
+    public List<String> completeUserNameForProfile(String name) {
+        return completeName(name);
     }
 
     @McpComplete(prompt = "travel-planner")

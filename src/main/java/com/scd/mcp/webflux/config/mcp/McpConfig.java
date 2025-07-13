@@ -4,7 +4,10 @@ import com.logaritex.mcp.spring.SpringAiMcpAnnotationProvider;
 import com.scd.mcp.webflux.config.mcp.provider.AutocompleteProvider;
 import com.scd.mcp.webflux.config.mcp.provider.PromptProvider;
 import com.scd.mcp.webflux.config.mcp.provider.ResourceProvider;
+import com.scd.mcp.webflux.config.mcp.provider.tools.ToolProvider;
 import io.modelcontextprotocol.server.McpServerFeatures;
+import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,6 +34,11 @@ public class McpConfig {
     public List<McpServerFeatures.SyncResourceSpecification> syncResourceSpecifications(
             List<ResourceProvider> resourceProviders) {
         return SpringAiMcpAnnotationProvider.createSyncResourceSpecifications(new ArrayList<>(resourceProviders));
+    }
+
+    @Bean
+    public ToolCallbackProvider toolCallbackProvider(List<ToolProvider> toolProviders) {
+        return MethodToolCallbackProvider.builder().toolObjects(toolProviders.toArray()).build();
     }
 
 }
