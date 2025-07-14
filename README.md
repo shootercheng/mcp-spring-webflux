@@ -19,7 +19,7 @@ data:/mcp/message?sessionId=3e89acfb-8cc1-4a09-be3e-b1c18e0a62e4
 event: message
 data: {"jsonrpc":"2.0","id":0,"result":{"protocolVersion":"2024-11-05","capabilities":{"completions":{},"logging":{},"prompts":{"listChanged":true},"resources":{"subscribe":false,"listChanged":true},"tools":{"listChanged":true}},"serverInfo":{"name":"mcp-server","version":"1.0.0"}}}
 ```
-步骤5 请求json 通知服务端,客户端已初始化完成
+步骤5 通知服务端,客户端已初始化完成 请求json
 ```json
 {"method":"notifications/initialized","jsonrpc":"2.0"}
 ```
